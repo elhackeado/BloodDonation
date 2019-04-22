@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,6 +19,7 @@ public class UserList extends ArrayAdapter<User> {
     List<User> userList;
     double lat1;
     double lon1;
+    static ArrayList<String> near = new ArrayList<String>();
 
     public UserList(Activity context, List<User> userList, double latitude, double longitude){
         super(context, R.layout.list_item, userList);
@@ -46,7 +48,11 @@ public class UserList extends ArrayAdapter<User> {
             textView1.setText(user.getName());
             textView2.setText("+91"+user.getPhone());
             textView3.setText(user.getBgroup());
-            textView4.setText(String.valueOf(distance(lat1,lon1,user.getLatitude(),user.getLongitude())) + " KM");
+            int distance = distance(lat1,lon1,user.getLatitude(),user.getLongitude());
+            if (distance<=10)
+                near.add(user.getFcmid());
+
+            textView4.setText(String.valueOf(distance) + " KM");
 
             return listViewItem;
 

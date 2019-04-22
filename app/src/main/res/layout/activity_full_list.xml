@@ -20,6 +20,12 @@
         android:transcriptMode="alwaysScroll"
         />
 
+    <Button
+        android:id="@+id/sendnotification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send notification within 10KM" />
+
 
 
 

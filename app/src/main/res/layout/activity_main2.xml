@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/drawer2"
+    android:background="@drawable/bd"
     tools:context=".Main2Activity">
 
     <RelativeLayout
@@ -36,6 +37,20 @@
             android:drawableTop="@drawable/ic_autorenew_black_24dp"
             android:padding="15dp"
             android:text="COMPATIBILITY"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/button3"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/button_style"
+            android:drawableTop="@drawable/ic_person_add_black_24dp"
+            android:padding="15dp"
+            android:text="Register Donor"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20sp" />
     </RelativeLayout>

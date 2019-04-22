@@ -11,18 +11,34 @@ import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,19 +49,21 @@ public class FullList extends AppCompatActivity {
     ProgressDialog progressDialog;
     SharedPreferences sharedPreferences;
     UserList adapter;
+    Button button;
+    Bundle c;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_list);
-        Bundle c = getIntent().getExtras();
+        c = getIntent().getExtras();
         final String bgroup = c.getString("bgroup");
         getSupportActionBar().setTitle("Donor List");
         getSupportActionBar().setSubtitle(bgroup + " Donors");
         sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         final double latitude = sharedPreferences.getFloat("latitude", 0);
         final double longitude = sharedPreferences.getFloat("longitude", 0);
-
+        button = (Button) findViewById(R.id.sendnotification);
         listViewUsers = (ListView) findViewById(R.id.list_view);
         userList = new ArrayList<>();
         progressDialog = new ProgressDialog(FullList.this);
@@ -145,6 +163,84 @@ public class FullList extends AppCompatActivity {
 
             }
         });
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progressDialog = new ProgressDialog(FullList.this);
+                progressDialog.setCancelable(false);
+                progressDialog.setMessage("Notifying donors within 10KM..");
+                progressDialog.show();
+                sendNotification();
+
+            }
+        });
+    }
+
+    public void sendNotification(){
+        try {
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            String URL = "https://projectuscreativity.com/paypal/firebase/gistfile1.php";
+            JSONObject jsonBody = new JSONObject();
+            int nearsize = UserList.near.size();
+
+            for(int i=0;i<nearsize;i++)
+            jsonBody.put(String.valueOf(i), UserList.near.get(i));
+            UserList.near.clear();
+            jsonBody.put("msg", "Urgently need Blood Group " + c.getString("bgroup") );
+
+
+
+            final String requestBody = jsonBody.toString();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("VOLLEY", response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("VOLLEY", error.toString());
+                }
+            }) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    try {
+                        return requestBody == null ? null : requestBody.getBytes("utf-8");
+                    } catch (UnsupportedEncodingException uee) {
+                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                        return null;
+                    }
+                }
+
+                @Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                    progressDialog.dismiss();
+                    String responseString = "";
+                    if (response != null) {
+                        responseString = String.valueOf(response.statusCode);
+                        // can get more details such as response.headers
+                    }
+                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+
+                }
+            };
+
+            requestQueue.add(stringRequest);
+
+            button.setVisibility(View.GONE);
+            Toast.makeText(FullList.this,"Sent notification to " + nearsize + " donors.",Toast.LENGTH_LONG).show();
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 }

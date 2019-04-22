@@ -4,13 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bd"
     tools:context=".SplashScreen">
 
-
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/imageView2"
+        android:layout_width="150dp"
+        android:layout_height="133dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        app:srcCompat="@mipmap/ic_launcher_foreground" />
+
+    <TextView
+        android:id="@+id/textView11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        app:srcCompat="@mipmap/ic_launcher_foreground" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="154dp"
+        android:text="Donate Blood Save Humanity"
+        android:textSize="16dp" />
+
+
 </RelativeLayout>

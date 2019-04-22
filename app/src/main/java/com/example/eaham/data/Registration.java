@@ -118,7 +118,7 @@ public class Registration extends AppCompatActivity {
                         }
                         else {
                             address = getCompleteAddressString(latitude,longitude);
-                            User user = new User(name, email, phone, pass, bgroup, latitude, longitude, address);
+                            User user = new User(name, email, phone, pass, bgroup, latitude, longitude, address, null);
                             mDatabase.child("User").child(phone).setValue(user);
                             Toast.makeText(Registration.this, "REGISTERED SUCCESSFULLY " + longitude+ " , " + latitude + " " + address, Toast.LENGTH_LONG).show();
                             Intent intent = new Intent(Registration.this, MainActivity.class);
@@ -214,12 +214,13 @@ class User {
     public String address;
     public  double latitude;
     public double longitude;
+    public String fcmid;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public User(String name, String email, String phone, String pass, String bgroup, double latitude, double longitude, String address) {
+    public User(String name, String email, String phone, String pass, String bgroup, double latitude, double longitude, String address, String fcmid) {
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -228,6 +229,7 @@ class User {
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
+        this.fcmid = fcmid;
     }
 
 
@@ -245,6 +247,10 @@ class User {
     public double getLongitude() {return longitude; }
 
     public String getAddress() {return address; }
+
+    public String getFcmid() {return fcmid;}
+
+
 
 }
 
